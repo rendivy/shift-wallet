@@ -1,7 +1,7 @@
 package com.example.shiftwallet.entity;
 
 
-import com.example.shiftwallet.dao.model.Gender;
+import com.example.shiftwallet.dao.model.account.Gender;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
