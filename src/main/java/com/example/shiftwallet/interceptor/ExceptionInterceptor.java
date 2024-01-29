@@ -1,24 +1,19 @@
 package com.example.shiftwallet.interceptor;
 
 import com.example.shiftwallet.dao.model.ErrorDetailsResponse;
-import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
-public class ConstraintViolationHandler {
+public class ExceptionInterceptor {
+
     @ExceptionHandler
-    public ResponseEntity<ErrorDetailsResponse> handleConstraintViolationException(ConstraintViolationException exception) {
+    public ResponseEntity<ErrorDetailsResponse> handleException(Exception exception) {
 
-        var firstViolation = exception
-                .getConstraintViolations()
-                .iterator()
-                .next();
-
-        var exceptionMessage = firstViolation
-                .getMessageTemplate();
+        var exceptionMessage = exception
+                .getMessage();
 
         var error = ErrorDetailsResponse
                 .builder()

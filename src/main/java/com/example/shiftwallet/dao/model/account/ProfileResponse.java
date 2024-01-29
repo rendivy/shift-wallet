@@ -9,8 +9,12 @@ import java.util.UUID;
 public record ProfileResponse(
         UUID id,
         String email,
-        String fullName,
-        Date birthDate,
+        UUID walletId,
+        String firstName,
+        String lastName,
+        Date lastUpdateDate,
+        Date registrationDate,
         String phoneNumber,
-        Gender gender
+        Gender gender,
+        Integer age
 ){}

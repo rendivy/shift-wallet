@@ -7,10 +7,11 @@ import java.util.Date;
 @Builder
 public record RegistrationRequest(
         Gender gender,
+        Integer age,
         String email,
         String password,
-        Date dateOfBirth,
-        String fullName,
+        String firstName,
+        String lastName,
         String phoneNumber
 ) {
 }
