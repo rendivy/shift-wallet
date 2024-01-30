@@ -1,7 +1,7 @@
 package com.example.shiftwallet.entity;
 
 
-import com.example.shiftwallet.dao.model.Gender;
+import com.example.shiftwallet.dao.model.account.Gender;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -30,11 +30,9 @@ public class User implements UserDetails {
     @Email(message = "Invalid email format")
     private String email;
 
-    @Column(nullable = false)
-    private Date createTime = new Date();
 
     @Column(nullable = false)
-    private Date dateOfBirth = new Date();
+    private Date registrationDate = new Date();
 
     @Column(unique = true)
     @Size(min = 5, max = 50, message = "Phone number should contain between 5 and 50 characters")
@@ -46,11 +44,29 @@ public class User implements UserDetails {
 
     @Size(min = 5, max = 50, message = "Name should contain between 5 and 50 characters")
     @NotBlank(message = "User name cannot be empty")
-    private String fullName;
+    private String firstName;
+
+    @Size(min = 5, max = 50, message = "Surname should contain between 5 and 50 characters")
+    @NotBlank(message = "User name cannot be empty")
+    private String lastName;
+
+    @Column(nullable = false)
+    @NotBlank(message = "User age cannot be empty")
+    private Integer age;
+
 
     @Size(min = 5, max = 50, message = "Password should contain between 5 and 50 characters")
     @NotBlank(message = "User password cannot be empty")
     private String password;
+
+    @Column
+    private Date lastUpdateDate;
+
+
+    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    //TODO when creating a user, create a wallet for him, change when created wallet entity
+    private UUID walletId;
 
 
     @Override

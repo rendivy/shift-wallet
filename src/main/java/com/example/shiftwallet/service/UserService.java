@@ -1,10 +1,18 @@
 package com.example.shiftwallet.service;
 
+import com.example.shiftwallet.dao.model.account.LoginRequest;
+import com.example.shiftwallet.dao.model.account.ProfileResponse;
+import com.example.shiftwallet.dao.model.account.RegistrationRequest;
+import com.example.shiftwallet.dao.model.auth.TokenResponse;
+import com.example.shiftwallet.dao.repository.UserRepository;
+import com.example.shiftwallet.dao.repository.mappers.UserMapper;
+import com.example.shiftwallet.entity.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -15,12 +23,22 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
 
     @Transactional
-    public TokenResponse registerUser(RegisterRequest registerRequest) {
-        User user = UserMapper.mapToUser(registerRequest);
+    public TokenResponse registerUser(RegistrationRequest registerRequest) {
+        User user = UserMapper.mapToUser(registerRequest, passwordEncoder::encode);
         userRepository.save(user);
+        return TokenResponse.builder()
+                .token(jwtService.generateToken(user.getId(), user.getEmail()))
+                .build();
+    }
+
+
+    public TokenResponse loginUser(LoginRequest loginRequest) {
+        var userOptional = userRepository.findByEmail(loginRequest.email());
+        User user = userOptional.orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + loginRequest.email()));
         return TokenResponse.builder()
                 .token(jwtService.generateToken(user.getId(), user.getEmail()))
                 .build();
