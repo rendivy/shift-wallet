@@ -12,7 +12,9 @@ public class UserMapper {
     public static User mapToUser(RegistrationRequest registerRequest, HashPassword hashPassword) {
         User user = new User();
         user.setAge(registerRequest.age());
-        user.setPassword(hashPassword.hash(registerRequest.password()));
+        user.setPassword(registerRequest.password());
+        user.setFirstName(registerRequest.firstName());
+        user.setLastName(registerRequest.lastName());
         user.setEmail(registerRequest.email());
         user.setPhoneNumber(registerRequest.phoneNumber());
         user.setGender(registerRequest.gender());

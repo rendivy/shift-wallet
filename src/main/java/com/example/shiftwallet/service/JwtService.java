@@ -2,6 +2,7 @@ package com.example.shiftwallet.service;
 
 
 
+import com.example.shiftwallet.dao.repository.RedisRepository;
 import com.example.shiftwallet.dao.repository.UserRepository;
 import com.example.shiftwallet.entity.User;
 import io.jsonwebtoken.Claims;
@@ -27,6 +28,7 @@ import java.util.UUID;
 public class JwtService {
 
     private final UserRepository userRepository;
+    private final RedisRepository redisRepository;
 
     @Value("${jwt.secret}")
     private String secret;
@@ -52,11 +54,17 @@ public class JwtService {
         try {
             var userId = extractAllClaims(token).get("userId", String.class);
             var isUserExists = userRepository.findById(UUID.fromString(userId));
-            return isUserExists.isPresent();
+            var isTokenExists = redisRepository.tokenExists("Bearer " + token);
+            return isUserExists.isPresent() && !isTokenExists;
         }
         catch (Exception e) {
             return false;
         }
+    }
+
+    public String extractTokenId(String token) {
+        var claims = extractAllClaims(token.substring(7)).getId();
+        
     }
 
     private Key getSignKey() {
