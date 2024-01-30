@@ -34,6 +34,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable).cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(customizer -> customizer.requestMatchers("/api/users/profile").authenticated())
+                .authorizeHttpRequests(customizer -> customizer.requestMatchers("/api/users/logout").authenticated())
                 .authorizeHttpRequests(it -> it.anyRequest().permitAll()).sessionManagement(it -> it.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(it -> it.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
