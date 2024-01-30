@@ -9,18 +9,5 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class ExceptionInterceptor {
 
-    @ExceptionHandler
-    public ResponseEntity<ErrorDetailsResponse> handleException(Exception exception) {
 
-        var exceptionMessage = exception
-                .getMessage();
-
-        var error = ErrorDetailsResponse
-                .builder()
-                .status(HttpStatus.BAD_REQUEST.value())
-                .message(exceptionMessage)
-                .build();
-
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-    }
 }

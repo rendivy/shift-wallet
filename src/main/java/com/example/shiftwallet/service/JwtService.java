@@ -1,7 +1,7 @@
 package com.example.shiftwallet.service;
 
 
-
+import com.example.shiftwallet.dao.repository.RedisRepository;
 import com.example.shiftwallet.dao.repository.UserRepository;
 import com.example.shiftwallet.entity.User;
 import io.jsonwebtoken.Claims;
@@ -27,6 +27,7 @@ import java.util.UUID;
 public class JwtService {
 
     private final UserRepository userRepository;
+    private final RedisRepository redisRepository;
 
     @Value("${jwt.secret}")
     private String secret;
@@ -42,8 +43,7 @@ public class JwtService {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-        }
-        catch (SignatureException e) {
+        } catch (SignatureException e) {
             throw new RuntimeException("Invalid token", e);
         }
     }
@@ -52,18 +52,21 @@ public class JwtService {
         try {
             var userId = extractAllClaims(token).get("userId", String.class);
             var isUserExists = userRepository.findById(UUID.fromString(userId));
-            return isUserExists.isPresent();
-        }
-        catch (Exception e) {
+            var isTokenExists = redisRepository.tokenExists(extractTokenId(token));
+            return isUserExists.isPresent() && !isTokenExists;
+        } catch (Exception e) {
             return false;
         }
+    }
+
+    public String extractTokenId(String token) {
+        return extractAllClaims(token).getId();
     }
 
     private Key getSignKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secret);
         return Keys.hmacShaKeyFor(keyBytes);
     }
-
 
 
     private Date getExpirationDateFromToken(String token) {

@@ -47,11 +47,10 @@ public class User implements UserDetails {
     private String firstName;
 
     @Size(min = 5, max = 50, message = "Surname should contain between 5 and 50 characters")
-    @NotBlank(message = "User name cannot be empty")
+    @NotBlank(message = "Lastname name cannot be empty")
     private String lastName;
 
     @Column(nullable = false)
-    @NotBlank(message = "User age cannot be empty")
     private Integer age;
 
 
@@ -66,7 +65,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
     //TODO when creating a user, create a wallet for him, change when created wallet entity
-    private UUID walletId;
+    private UUID walletId = UUID.randomUUID();
 
 
     @Override

@@ -4,6 +4,7 @@ import com.example.shiftwallet.dao.model.account.LoginRequest;
 import com.example.shiftwallet.dao.model.account.ProfileResponse;
 import com.example.shiftwallet.dao.model.account.RegistrationRequest;
 import com.example.shiftwallet.dao.model.auth.TokenResponse;
+import com.example.shiftwallet.dao.repository.RedisRepository;
 import com.example.shiftwallet.dao.repository.UserRepository;
 import com.example.shiftwallet.dao.repository.mappers.UserMapper;
 import com.example.shiftwallet.entity.User;
@@ -23,7 +24,8 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final RedisRepository redisRepository;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
     @Transactional
@@ -34,6 +36,14 @@ public class UserService implements UserDetailsService {
                 .token(jwtService.generateToken(user.getId(), user.getEmail()))
                 .build();
     }
+
+
+    public void logoutUser(String token) {
+        var tokenId = jwtService.extractTokenId(token.substring("Bearer ".length()));
+        redisRepository.save(tokenId, "Invalid");
+    }
+
+
 
 
     public TokenResponse loginUser(LoginRequest loginRequest) {
