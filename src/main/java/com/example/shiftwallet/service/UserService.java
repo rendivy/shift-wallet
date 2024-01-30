@@ -39,9 +39,8 @@ public class UserService implements UserDetailsService {
 
 
     public void logoutUser(String token) {
-        var tokenId = jwtService.extractTokenId(token);
-        var authToken = token.substring(7);
-        redisRepository.save(token, "Invalid");
+        var tokenId = jwtService.extractTokenId(token.substring("Bearer ".length()));
+        redisRepository.save(tokenId, "Invalid");
     }
 
 
